@@ -1,6 +1,7 @@
 package com.covid19.alertsystem.service;
 
 import com.covid19.alertsystem.dao.ReportDao;
+import com.covid19.alertsystem.dao.TotalReportsDao;
 import com.covid19.alertsystem.dto.ReportCaseRequest;
 import com.covid19.alertsystem.entity.ReportCasePO;
 import com.covid19.alertsystem.utils.ReportValidator;
@@ -20,6 +21,9 @@ public class ReportService {
   @Autowired
   private AlertService alertService;
 
+  @Autowired
+  private TotalReportsDao totalReportsDao;
+
   public void reportCase(ReportCaseRequest request) throws Exception {
     reportValidator.validate(request);
 
@@ -27,6 +31,7 @@ public class ReportService {
     BeanUtils.copyProperties(request, reportCasePO);
     reportDao.saveReportCase(reportCasePO);
 
+    totalReportsDao.saveOrUpdate(reportCasePO);
     alertService.handleAlerts(reportCasePO.getZipcode());
   }
 }
