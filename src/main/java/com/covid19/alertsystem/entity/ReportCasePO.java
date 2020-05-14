@@ -4,9 +4,11 @@ import lombok.Data;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
+import java.io.Serializable;
+
 @Entity(value = "caseDetails")
 @Data
-public class ReportCasePO {
+public class ReportCasePO implements Serializable {
 
   @Id
   private String id;

@@ -1,5 +1,6 @@
 package com.covid19.alertsystem.exceptions.handlers;
 
+import com.covid19.alertsystem.exceptions.ObjectNotFoundException;
 import com.covid19.alertsystem.exceptions.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,6 +28,11 @@ public class AbstractExceptionHandler {
   @ExceptionHandler(ValidationException.class)
   private ModelAndView validationError(HttpServletRequest request, HttpServletResponse response, Exception ex) {
     return buildModel(request, response, HttpStatus.EXPECTATION_FAILED, "Validation error", ex.getMessage());
+  }
+
+  @ExceptionHandler(ObjectNotFoundException.class)
+  private ModelAndView notFoundError(HttpServletRequest request, HttpServletResponse response, Exception ex) {
+    return buildModel(request, response, HttpStatus.EXPECTATION_FAILED, "Data/object not found", ex.getMessage());
   }
 
   private ModelAndView buildModel(HttpServletRequest request, HttpServletResponse response, HttpStatus httpStatus, String error, String message) {

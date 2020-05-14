@@ -5,11 +5,12 @@ import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Entity(value = "userDetails")
 @Data
-public class RegistrationPO implements Serializable{
+public class UserPO implements Serializable{
 
   @Id
   private String id;
@@ -28,7 +29,8 @@ public class RegistrationPO implements Serializable{
 
   private List<String> registerZipcodes;
 
-  private String alertInterval;
+  private String alertPreference;
 
+  private Date lastAlertTime;
 
 }

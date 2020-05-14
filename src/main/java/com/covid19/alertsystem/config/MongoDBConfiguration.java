@@ -1,6 +1,6 @@
 package com.covid19.alertsystem.config;
 
-import com.covid19.alertsystem.entity.RegistrationPO;
+import com.covid19.alertsystem.entity.UserPO;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.AdvancedDatastore;
 import org.mongodb.morphia.Datastore;
@@ -17,14 +17,15 @@ import org.springframework.context.annotation.Configuration;
   @Bean
   public Morphia morphia() {
     Morphia morphia = new Morphia();
-    morphia.map(RegistrationPO.class);
+    morphia.map(UserPO.class);
+    morphia.getMapper().getOptions().setStoreNulls(true);
     return morphia;
   }
 
   @Bean(name = "dataStore")
   public Datastore dataStore() {
     Datastore datastore = morphia().createDatastore(new MongoClient(), "alertSystem");
-    datastore.getCollection(RegistrationPO.class).dropIndexes();
+    datastore.getCollection(UserPO.class).dropIndexes();
     datastore.ensureIndexes();
     return datastore;
   }

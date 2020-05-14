@@ -1,15 +1,15 @@
 package com.covid19.alertsystem.controller;
 
 import com.covid19.alertsystem.dto.RegistrationRequest;
-import com.covid19.alertsystem.service.RegistrationService;
+import com.covid19.alertsystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class RegistrationController {
+public class UserController {
 
   @Autowired
-  private RegistrationService registrationService;
+  private UserService userService;
 
   @RequestMapping("/")
   public String healthCheck() {
@@ -18,7 +18,7 @@ public class RegistrationController {
 
   @PostMapping(value = "/register")
   public void register(@RequestBody RegistrationRequest request) throws Exception {
-    registrationService.register(request);
+    userService.register(request);
   }
 
 

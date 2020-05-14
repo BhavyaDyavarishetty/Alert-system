@@ -17,10 +17,16 @@ public class ReportService {
   @Autowired
   private ReportDao reportDao;
 
+  @Autowired
+  private AlertService alertService;
+
   public void reportCase(ReportCaseRequest request) throws Exception {
     reportValidator.validate(request);
+
     ReportCasePO reportCasePO = new ReportCasePO();
     BeanUtils.copyProperties(request, reportCasePO);
     reportDao.saveReportCase(reportCasePO);
+
+    alertService.handleAlerts(reportCasePO.getZipcode());
   }
 }

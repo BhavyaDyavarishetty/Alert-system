@@ -1,8 +1,10 @@
 package com.covid19.alertsystem.utils;
 
 import com.covid19.alertsystem.dto.RegistrationRequest;
+import com.covid19.alertsystem.exceptions.ObjectNotFoundException;
 import com.covid19.alertsystem.exceptions.ValidationException;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -20,16 +22,31 @@ public class RegistrationValidator {
   }
 
   public void validate(RegistrationRequest request) throws Exception {
-    validatePhoneNumber(request.getPhoneNumber());
+    validatePhoneNumber(request.getIsPhoneNumber(), request.getPhoneNumber());
+    validateEmailAddress(request.getIsPhoneNumber(), request.getEmailAddress());
     validateZipcode(request.getZipcode());
     validateState(request.getState());
     validateRegisteredZipcodes(request.getRegisterZipcodes());
   }
 
-  private void validatePhoneNumber(String phoneNumber) throws ValidationException {
+  private void validatePhoneNumber(Boolean isPhoneNumber, String phoneNumber)
+      throws ValidationException, ObjectNotFoundException {
+    if(isPhoneNumber && StringUtils.isEmpty(phoneNumber)){
+      throw new ObjectNotFoundException("Empty phone number");
+    }
     if(!phoneNumber.matches("\\d{10}")){
       throw new ValidationException("Invalid phone number");
     }
+  }
+
+  private void validateEmailAddress(Boolean isPhoneNumber, String emailAddress)
+      throws ValidationException, ObjectNotFoundException {
+    if(!isPhoneNumber && StringUtils.isEmpty(emailAddress)){
+      throw new ObjectNotFoundException("Empty email address");
+    }
+//    if(!emailAddress.matches("\\d{10}")){
+//      throw new ValidationException("Invalid email address");
+//    }
   }
 
   private void validateZipcode(String zipcode) throws ValidationException {
