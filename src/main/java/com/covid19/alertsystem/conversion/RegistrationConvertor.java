@@ -11,11 +11,6 @@ public class RegistrationConvertor {
   public RegistrationPO convert(RegistrationRequest registrationRequest){
     RegistrationPO registrationPO = new RegistrationPO();
     BeanUtils.copyProperties(registrationRequest, registrationPO);
-    if(!registrationRequest.getAlertInterval().isEmpty()){
-      switch(registrationRequest.getAlertInterval()){
-
-      }
-    }
     return registrationPO;
   }
 
