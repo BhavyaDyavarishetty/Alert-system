@@ -1,10 +1,9 @@
 package com.covid19.alertsystem.dto;
 
-import java.util.List;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class RegistrationRequest {
@@ -26,7 +25,8 @@ public class RegistrationRequest {
   @NotNull(message = "State cannot be empty")
   private String state;
 
-  @NotEmpty(message = "Enter atleast one zipcode to register")
   private List<String> registerZipcodes;
+
+  private String alertInterval;
 
 }
