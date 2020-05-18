@@ -32,6 +32,6 @@ public class ReportService {
     reportDao.saveReportCase(reportCasePO);
 
     totalReportsDao.saveOrUpdate(reportCasePO);
-    alertService.handleAlerts(reportCasePO.getZipcode());
+    alertService.onCaseHandleAlerts(reportCasePO.getZipcode());
   }
 }

@@ -23,7 +23,10 @@ public class UserDaoImpl implements UserDao {
   @Override
   public List<UserPO> getAllUsers() {
     Query<UserPO> query = advancedDatastore.createQuery(UserPO.class);
-    List<UserPO> allUsers = query.asList();
-    return allUsers;
+    return query.asList();
+  }
+
+  @Override public void updateUsers(List<UserPO> users) {
+    advancedDatastore.merge(users);
   }
 }

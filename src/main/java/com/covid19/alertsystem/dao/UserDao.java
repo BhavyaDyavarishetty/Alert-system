@@ -8,4 +8,6 @@ public interface UserDao {
   void saveRegistration(UserPO registrationPO);
 
   List<UserPO> getAllUsers();
+
+  void updateUsers(List<UserPO> users);
 }

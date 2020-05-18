@@ -31,4 +31,8 @@ public class UserService {
   public List<UserPO> getAllUsers(){
     return userDao.getAllUsers();
   }
+
+  public void updateUsers(List<UserPO> eligibleUsers) {
+    userDao.updateUsers(eligibleUsers);
+  }
 }
