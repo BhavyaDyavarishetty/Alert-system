@@ -32,6 +32,10 @@ public class UserService {
     return userDao.getAllUsers();
   }
 
+  public List<UserPO> getUsersByPreference(String preference){
+    return userDao.getUsersByAlertPreference(preference);
+  }
+
   public void updateUsers(List<UserPO> eligibleUsers) {
     userDao.updateUsers(eligibleUsers);
   }

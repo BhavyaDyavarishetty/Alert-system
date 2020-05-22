@@ -62,4 +62,11 @@ public class TotalReportsDaoImpl implements TotalReportsDao {
     Query<TotalReportsPO> query = dataStore.createQuery(TotalReportsPO.class);
     return query.asList();
   }
+
+  @Override
+  public TotalReportsPO getTotalReportsByZipcode(String zipcode){
+    Query<TotalReportsPO> query = dataStore.createQuery(TotalReportsPO.class);
+    query.filter("zipcode", zipcode);
+    return query.get();
+  }
 }

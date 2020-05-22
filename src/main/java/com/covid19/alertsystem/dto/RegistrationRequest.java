@@ -22,4 +22,6 @@ public class RegistrationRequest {
 
   private String alertPreference;
 
+  private Integer range;
+
 }

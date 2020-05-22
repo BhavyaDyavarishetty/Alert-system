@@ -33,4 +33,6 @@ public class UserPO implements Serializable{
 
   private Date lastAlertTime;
 
+  private Integer range;
+
 }

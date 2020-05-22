@@ -17,4 +17,6 @@ public interface TotalReportsDao {
 
   List<TotalReportsPO> getTotalReports();
 
+  TotalReportsPO getTotalReportsByZipcode(String zipcode);
+
 }

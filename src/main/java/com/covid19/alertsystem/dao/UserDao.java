@@ -9,5 +9,7 @@ public interface UserDao {
 
   List<UserPO> getAllUsers();
 
+  List<UserPO> getUsersByAlertPreference(String preference);
+
   void updateUsers(List<UserPO> users);
 }

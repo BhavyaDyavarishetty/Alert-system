@@ -3,38 +3,50 @@ package com.covid19.alertsystem.service;
 import com.covid19.alertsystem.dao.TotalReportsDao;
 import com.covid19.alertsystem.entity.TotalReportsPO;
 import com.covid19.alertsystem.entity.UserPO;
-import com.covid19.alertsystem.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.covid19.alertsystem.utils.Constants.ON_NEW_CASE;
+
 @Service
 public class AlertService {
 
-  private static final Integer HOUR =  3600*1000;
+  private static final Integer HOUR = 3600 * 1000;
 
-  @Autowired
-  private UserService userService;
+  @Autowired private UserService userService;
 
-  @Autowired
-  private TotalReportsDao totalReportsDao;
+  @Autowired private TotalReportsDao totalReportsDao;
 
-  @Autowired
-  private SendMessageService sendMessageService;
+  @Autowired private SendMessageService sendMessageService;
+
+  @Autowired private ZipcodeService zipcodeService;
 
   public void onCaseHandleAlerts(String zipcode) {
-    List<UserPO> allUsers = userService.getAllUsers();
-    allUsers = allUsers.stream()
-        .filter(obj -> (obj.getAlertPreference().equals(Constants.ON_NEW_CASE)) )
-        .collect(Collectors.toList());
-    sendAlerts(allUsers);
-    allUsers.forEach(user -> user.setLastAlertTime(new Date()));
-    userService.updateUsers(allUsers);
+    List<UserPO> allUsers = userService.getUsersByPreference(ON_NEW_CASE);
+    allUsers = zipcodeService.filterUsersByZipcode(zipcode, allUsers);
+    if (!allUsers.isEmpty()) {
+      sendOnCaseAlerts(allUsers, zipcode);
+      allUsers.forEach(user -> user.setLastAlertTime(new Date()));
+      userService.updateUsers(allUsers);
+    }
+  }
+
+  private void sendOnCaseAlerts(List<UserPO> eligibleUsers, String zipcode){
+    TotalReportsPO totalReportsPO = totalReportsDao.getTotalReportsByZipcode(zipcode);
+    for (UserPO user : eligibleUsers) {
+      if (user.getIsPhoneNumber()) {
+        sendMobileAlerts(user, Collections.singletonList(totalReportsPO));
+      } else {
+        sendEmailAlerts(user, Collections.singletonList(totalReportsPO));
+      }
+    }
   }
 
   @Scheduled(cron = "0 0 9 ? * * *")
@@ -43,8 +55,8 @@ public class AlertService {
     List<UserPO> eligibleUsers = new ArrayList<>();
 
     for (UserPO user : allUsers) {
-      if(user.getLastAlertTime() == null){
-        if(!user.getAlertPreference().equals(Constants.ON_NEW_CASE)){
+      if (user.getLastAlertTime() == null) {
+        if (!user.getAlertPreference().equals(ON_NEW_CASE)) {
           eligibleUsers.add(user);
         }
         continue;
@@ -75,28 +87,27 @@ public class AlertService {
         break;
       }
     }
-    sendAlerts(eligibleUsers);
-    eligibleUsers.forEach(user -> user.setLastAlertTime(new Date()));
-    userService.updateUsers(eligibleUsers);
+    if (!eligibleUsers.isEmpty()) {
+      sendAlerts(eligibleUsers);
+      eligibleUsers.forEach(user -> user.setLastAlertTime(new Date()));
+      userService.updateUsers(eligibleUsers);
+    }
   }
 
-
   private void sendAlerts(List<UserPO> eligibleUsers) {
-    if(eligibleUsers.isEmpty())
-      return;
+      List<TotalReportsPO> totalReports = totalReportsDao.getTotalReports();
 
-    List<TotalReportsPO> totalReports = totalReportsDao.getTotalReports();
+      for (UserPO user : eligibleUsers) {
+        List<TotalReportsPO> eligibleReports = calculateEligibleAlerts(user, totalReports);
+        if (eligibleReports.isEmpty())
+          continue;
 
-    for(UserPO user : eligibleUsers){
-      List<TotalReportsPO> eligibleReports = calculateEligibleAlerts(user, totalReports);
-      if(eligibleReports.isEmpty()) continue;
-
-      if(user.getIsPhoneNumber()){
-        sendMobileAlerts(user, eligibleReports);
-      } else {
-        sendEmailAlerts(user, eligibleReports);
+        if (user.getIsPhoneNumber()) {
+          sendMobileAlerts(user, eligibleReports);
+        } else {
+          sendEmailAlerts(user, eligibleReports);
+        }
       }
-    }
   }
 
   private List<TotalReportsPO> calculateEligibleAlerts(UserPO user, List<TotalReportsPO> totalReports) {
@@ -109,6 +120,9 @@ public class AlertService {
     sendMessageService.sendMessage(userPO, eligibleReports);
   }
 
+  /**
+   * Todo: Needs to be implemented\
+   */
   private void sendEmailAlerts(UserPO userPO, List<TotalReportsPO> eligibleReports) {
   }
 }

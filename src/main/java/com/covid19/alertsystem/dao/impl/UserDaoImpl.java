@@ -26,6 +26,12 @@ public class UserDaoImpl implements UserDao {
     return query.asList();
   }
 
+  @Override public List<UserPO> getUsersByAlertPreference(String preference) {
+    Query<UserPO> query = advancedDatastore.createQuery(UserPO.class);
+    query.field("alert_preference").equal(preference);
+    return query.asList();
+  }
+
   @Override public void updateUsers(List<UserPO> users) {
     advancedDatastore.merge(users);
   }
